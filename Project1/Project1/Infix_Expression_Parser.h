@@ -1,10 +1,12 @@
 #pragma once
-#ifndef INFIX_EXPRESION_PARSER_H_
-#define INFIX_EXPRESION_PARSER_H_
+#ifndef INFIX_EXPRESSION_PARSER_H_
+#define INFIX_EXPRESSION_PARSER_H_
 
 #include <stack>
 #include <string>
 #include <iostream>
+#include <sstream>
+#include <stdexcept>
 
 using namespace std;
 
@@ -12,12 +14,22 @@ class Infix_Evaluator
 {
 public:
 	void parser(string expression);
-	void evaluation(stack<char> maths);
+	
 private:
+	int eval_operator(char op);
 	static const string OPERATORS;
-	static const string PRECEDENCE;
+	static const int PRECEDENCE[];
+	bool is_operator(char ch) const {
+		return OPERATORS.find(ch) != string::npos;
+	}
+	stack<int> operands_stack;
 };
 
-#endif INFIX_EXPRESION_PARSER_H_
+class Syntax_Error : public invalid_argument {
+public:
+	Syntax_Error(string msg) : invalid_argument(msg) {}
+};
+
+#endif
 
 
