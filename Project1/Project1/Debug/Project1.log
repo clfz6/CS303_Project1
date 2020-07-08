@@ -1,5 +1,5 @@
 ﻿  Infix_Expression_Parser.cpp
-C:\c++\CS303\CS303_Project1\Project1\Project1\Infix_Expression_Parser.cpp(114,27): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+C:\c++\CS303\CS303_Project1\Project1\Project1\Infix_Expression_Parser.cpp(155,27): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
   Source.cpp
   Generating Code...
   Project1.vcxproj -> C:\c++\CS303\CS303_Project1\Project1\Debug\Project1.exe

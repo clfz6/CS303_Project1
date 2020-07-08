@@ -7,7 +7,7 @@
 int main()
 {
 	Infix_Evaluator eval;
-	eval.parser("3^2 ");
+	eval.parser("8+8");
 
 	return 0;
 }

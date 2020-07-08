@@ -20,6 +20,7 @@ private:
 	stack<int> operands_stack;
 	stack<char> operators_stack;
 	int eval_operator(char op);
+	int eval_double_char_operator(char char1, char char2);
 	static const string OPERATORS;
 	static const int PRECEDENCE[];
 	bool is_operator(char ch) const {
@@ -28,6 +29,7 @@ private:
 	int precedence(char op) const {
 		return PRECEDENCE[OPERATORS.find(op)];
 	}
+	int element;
 };
 
 #endif

@@ -6,10 +6,12 @@ const int Infix_Evaluator::PRECEDENCE[] = { 9, 9, 8, 8, 8, 8, 7, 6, 6, 6, 5, 5, 
 void Infix_Evaluator::parser(string expression)
 {	
 	istringstream token(expression);
-	char next_char;
+	char next_char, n_next_char, nn_next_next;
     int num, result;
+    element = 0;
 	while(token >> next_char)
 	{
+        
         try
         {
             if (isdigit(next_char))
@@ -20,11 +22,41 @@ void Infix_Evaluator::parser(string expression)
             }
             else if (is_operator(next_char))
             {
+                token >> n_next_char;
+                if (is_operator(n_next_char) || n_next_char == '=')
+                {
+                    try
+                    {
+                        token >> nn_next_next;
+                        if (isdigit(nn_next_next))
+                        {
+                            token.putback(nn_next_next);
+                            token >> num;
+                            operands_stack.push(num);
+                            element++;
+                        }
+                        else
+                        {
+                            throw runtime_error("Too many operators in a row @ char " + element);
+                        }
+                    }
+                    catch (runtime_error& e)
+                    {
+                        cout << e.what() << endl;
+                        exit(3);
+                    }
+                    result = eval_double_char_operator(next_char, n_next_char);
+                    operands_stack.push(result);
+                    element++;
+                }
+                else
+                {
+                    token.putback(n_next_char);
+                }
 
                 if (operators_stack.empty())
                 {
                     operators_stack.push(next_char);
-                    cout << "pushed operator into stack" << endl;
                 
                 }
                 else if (!operators_stack.empty())
@@ -33,17 +65,13 @@ void Infix_Evaluator::parser(string expression)
                     {
                         result = eval_operator(next_char);
                         operands_stack.push(result);
-                        cout << "evaluated operator, precedence was higher" << endl;
                     }
                     else
                     {
                         result = eval_operator(operators_stack.top());
                         operands_stack.push(result);
                         operators_stack.push(next_char);
-                        cout << "evaluated operator, precedence was lower" << endl;
-                    }
-                    
-                    
+                    }                    
                 }
                 else
                 {
@@ -60,12 +88,12 @@ void Infix_Evaluator::parser(string expression)
             cout << e.what() << endl;
             exit(1);
         }   
+        element++;
 	}
     if (!operators_stack.empty())
     {
         result = eval_operator(operators_stack.top());
         operands_stack.push(result);
-        cout << "evaluated operator outside while loop" << endl;
     }
     
     cout << operands_stack.top() << endl;
@@ -107,14 +135,67 @@ int Infix_Evaluator::eval_operator(char op)
         break;
     case '*': result = lhs * rhs;
         break;
-    case '/': result = lhs / rhs;
+    case '/': 
+        try
+        {
+            if (rhs == 0)
+            {
+                throw runtime_error("Division by zero @ char " + element);
+            }
+        }
+        catch (runtime_error& e)
+        {
+            cout << e.what() << endl;
+            exit(3);
+        }
+        result = lhs / rhs;
         break;
     case '%': result = lhs % rhs;
         break;
     case '^': result = pow(lhs, rhs);
     }
-    cout << "did maths" << endl;
 
+    return result;
+}
+
+int Infix_Evaluator::eval_double_char_operator(char char1, char char2)
+{
+    int result = 0;
+
+    try
+    {
+        if (operands_stack.empty())
+            throw runtime_error("Stack is empty");
+    }
+    catch (runtime_error& e)
+    {
+        cout << e.what() << endl;
+        exit(2);
+    }
+
+    try
+    {
+        if (operands_stack.empty())
+            throw runtime_error("Stack is empty");
+    }
+    catch (runtime_error& e)
+    {
+        cout << e.what() << endl;
+        exit(2);
+    }
+
+    if (char1 == '+' && char2 == '+')
+    {
+        int rhs = operands_stack.top();
+        operands_stack.pop();
+        result = ++rhs;
+    }
+    else if (char1 == '-' && char2 == '-')
+    {
+        int rhs = operands_stack.top();
+        operands_stack.pop();
+        result = --rhs;
+    }
 
     return result;
 }
